@@ -1,4 +1,3 @@
-import { IsEmail, IsString } from "class-validator";
 import { Entity, Column, PrimaryGeneratedColumn, AfterInsert, AfterUpdate, AfterRemove } from "typeorm";
 
 @Entity()

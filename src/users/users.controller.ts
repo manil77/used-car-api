@@ -1,6 +1,8 @@
-import { Controller, Body, Get, Post } from '@nestjs/common';
+import { Controller, Body, Get, Post, Param, Patch, Delete, Query } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
+import { User } from './user.entity';
+import { UpdateUserDto } from './dtos/update-user-dto';
 
 @Controller('auth')
 export class UsersController {
@@ -11,8 +13,23 @@ export class UsersController {
         this.userService.create(body.email, body.password)
     }
 
+    @Get('/:id')
+    findUser(@Param('id') id: number) {
+        return this.userService.findOne(id);
+    }
+
     @Get()
-    findUser() { }
+    findAll(@Query('email') email: string) {
+        return this.userService.find(email);
+    }
 
+    @Patch('/:id')
+    updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
+        return this.userService.update(parseInt(id), body);
+    }
 
+    @Delete('/:id')
+    deleteUser(@Param('id') id: string) {
+        return this.userService.remove(parseInt(id));
+    }
 }
