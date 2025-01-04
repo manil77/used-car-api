@@ -9,7 +9,7 @@ content-type:application/json
 
 
 ### Get a user
-GET http://localhost:3000/auth/3
+GET http://localhost:3000/auth/31
 
 
 ### Get all user
