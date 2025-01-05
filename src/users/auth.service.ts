@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common"
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common"
 import { UsersService } from "./users.service"
 import { randomBytes, scrypt as _scrpyt } from "crypto";
 import { promisify } from "util"; //It is a function that makes use of callbacks. We are using promisify to work with scrypt
@@ -38,5 +38,22 @@ export class AuthService {
         return newUser;
     }
 
-    signin() { }
+    async signin(email: string, password: string) {
+        const [user] = await this.usersService.find(email);
+
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        const [salt, storedHash] = user.password.split('.');
+
+        const hash = (await scrypt(password, salt, 32)) as Buffer;
+
+        if (hash.toString('hex') !== storedHash) {
+            throw new BadRequestException('Credentials is not correct');
+        }
+        else {
+            return user;
+        }
+    }
 }

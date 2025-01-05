@@ -3,17 +3,26 @@ POST http://localhost:3000/auth/signup
 content-type:application/json
 
 {
-    "email":"test3@some.com",
-    "password": "Admin@123"
+    "email":"test5@some.com",
+    "password": "test123"
+}
+
+### Sign In a user
+POST http://localhost:3000/auth/signin
+content-type:application/json
+
+{
+    "email":"test4@some.com",
+    "password": "test123"
 }
 
 
 ### Get a user
-GET http://localhost:3000/auth/31
+GET http://localhost:3000/auth/4
 
 
 ### Get all user
-GET http://localhost:3000/auth?email=test1@some.com
+GET http://localhost:3000/auth?email=test4@some.com
 
 
 ### Update a user
