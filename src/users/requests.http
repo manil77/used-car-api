@@ -33,6 +33,11 @@ content-type: application/json
     "password": "bbbbbbb"
 }
 
-
 ### Delete a user
-DELETE   http://localhost:3000/auth/2
+DELETE http://localhost:3000/auth/2
+
+### Set a color
+GET http://localhost:3000/auth/colors/blue
+
+### Get a color
+GET  http://localhost:3000/auth/colors
