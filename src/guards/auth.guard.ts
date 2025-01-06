@@ -5,5 +5,10 @@ export class AuthGuard implements CanActivate {
         const request = context.switchToHttp().getRequest();
 
         return request.session.userId;
+        /* If request.session.userId is truthy value:-
+         * User can access whatever route we've applied the guard to.
+         * If request.session.userId is falsy value:-
+         * Falsy value will prevent access to a given handler or controller
+        */
     }
 }
