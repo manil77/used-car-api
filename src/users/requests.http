@@ -36,3 +36,7 @@ content-type: application/json
 ### Delete a user
 DELETE http://localhost:3000/auth/2
 
+### Who Am I
+GET http://localhost:3000/auth/whoami
+
+

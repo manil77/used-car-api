@@ -12,6 +12,10 @@ import { AuthService } from './auth.service';
 export class UsersController {
     constructor(private userService: UsersService, private authService: AuthService) { }
 
+    @Get('/whoami')
+    whoAmI(@Session() session: any) {
+        return this.userService.findOne(session.userId);
+    }
 
     @Post('/signup')
     async createUser(@Body() body: CreateUserDto, @Session() session: any) {
