@@ -1,4 +1,7 @@
-import { NotFoundException, Session, Controller, Body, Get, Post, Param, Patch, Delete, Query, UseInterceptors, ClassSerializerInterceptor, BadRequestException } from '@nestjs/common';
+import {
+    NotFoundException, Session, Controller, Body, Get, Post, Param,
+    Patch, Delete, Query
+} from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
@@ -23,7 +26,7 @@ export class UsersController {
     // }
 
     @Get('/whoami')
-    whoAmI(@CurrentUser() user: string) {
+    whoAmI(@CurrentUser() user: User) {
         return user;
     }
 
