@@ -1,4 +1,4 @@
-import { NotFoundException, Session, Controller, Body, Get, Post, Param, Patch, Delete, Query, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { NotFoundException, Session, Controller, Body, Get, Post, Param, Patch, Delete, Query, UseInterceptors, ClassSerializerInterceptor, BadRequestException } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
@@ -14,7 +14,11 @@ export class UsersController {
 
     @Get('/whoami')
     whoAmI(@Session() session: any) {
-        return this.userService.findOne(session.userId);
+        const user = this.userService.findOne(session.userId);
+        if (!user) {
+            throw new BadRequestException('User not found');
+        }
+        return user;
     }
 
     @Post('/signup')
@@ -54,5 +58,10 @@ export class UsersController {
     @Delete('/:id')
     deleteUser(@Param('id') id: string) {
         return this.userService.remove(parseInt(id));
+    }
+
+    @Post('/signout')
+    signOut(@Session() session: any) {
+        session.userId = null;
     }
 }
