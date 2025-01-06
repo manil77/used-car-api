@@ -6,18 +6,24 @@ import { UpdateUserDto } from './dtos/update-user-dto';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
 import { AuthService } from './auth.service';
+import { CurrentUser } from './decorators/current-user.decorator';
 
 @Serialize(UserDto)
 @Controller('auth')
 export class UsersController {
     constructor(private userService: UsersService, private authService: AuthService) { }
 
+    // @Get('/whoami')
+    // whoAmI(@Session() session: any) {
+    //     const user = this.userService.findOne(session.userId);
+    //     if (!user) {
+    //         throw new BadRequestException('User not found');
+    //     }
+    //     return user;
+    // }
+
     @Get('/whoami')
-    whoAmI(@Session() session: any) {
-        const user = this.userService.findOne(session.userId);
-        if (!user) {
-            throw new BadRequestException('User not found');
-        }
+    whoAmI(@CurrentUser() user: string) {
         return user;
     }
 
