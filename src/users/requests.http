@@ -3,7 +3,7 @@ POST http://localhost:3000/auth/signup
 content-type:application/json
 
 {
-    "email":"test5@some.com",
+    "email":"test6@some.com",
     "password": "test123"
 }
 
@@ -12,7 +12,7 @@ POST http://localhost:3000/auth/signin
 content-type:application/json
 
 {
-    "email":"test4@some.com",
+    "email":"test6@some.com",
     "password": "test123"
 }
 
@@ -36,8 +36,3 @@ content-type: application/json
 ### Delete a user
 DELETE http://localhost:3000/auth/2
 
-### Set a color
-GET http://localhost:3000/auth/colors/blue
-
-### Get a color
-GET  http://localhost:3000/auth/colors
