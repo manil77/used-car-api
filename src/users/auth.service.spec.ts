@@ -11,10 +11,24 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 describe('AuthService', () => {
     let service: AuthService;
     let fakeUsersService: Partial<UsersService>;
+    const users: User[] = [];
+
     beforeEach(async () => {
         fakeUsersService = {
-            find: () => Promise.resolve([]),
-            create: (email: string, password: string) => Promise.resolve({ id: 1, email, password } as User)
+            find: (email: string) => {
+                const filteredUsers = users.filter((user) => user.email);
+                return Promise.resolve(filteredUsers);
+            },
+
+            create: (email: string, password: string) => {
+                const user = {
+                    id: Math.floor(Math.random() * 999999),
+                    email,
+                    password,
+                } as User;
+                users.push(user);
+                return Promise.resolve(user);
+            }
         };
         const module = await Test.createTestingModule({
             providers: [ //we tried to create DI container.
@@ -60,4 +74,26 @@ describe('AuthService', () => {
             service.signin('some@some.com', 'asdf'),
         ).rejects.toThrow(NotFoundException);
     });
+
+    //Invalid password is provided
+    it('throws if an invalid password is provided', async () => {
+        fakeUsersService.find = () =>
+            Promise.resolve([
+                { email: 'asdf@asdf.com', password: 'laskdjf' } as User,
+            ]);
+        await expect(
+            service.signin('laskdjf@alskdfj.com', 'passowrd'),
+        ).rejects.toThrow(BadRequestException);
+    });
+
+    //returns a user if password matches
+    it('returns a user if password matches', async () => {
+        fakeUsersService.find = () => Promise.resolve
+            ([{ email: 'test2@some.com', password: 'Admin@123' } as User]);
+
+        const user = await service.signin('test2@some.com', 'Admin@123');
+        expect(user).toBeDefined();
+    })
+
+
 });
