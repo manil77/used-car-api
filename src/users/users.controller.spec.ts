@@ -28,7 +28,7 @@ describe('UsersController', () => {
       controllers: [UsersController],
       providers:[
         {
-          provide:UsersService,
+          provide: UsersService,
           useValue: fakeUserService
         },
         {

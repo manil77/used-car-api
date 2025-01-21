@@ -1,96 +1,83 @@
-import { Test } from "@nestjs/testing";
-import { AuthService } from "./auth.service";
-import { UsersService } from "./users.service";
-import { User } from "./user.entity";
-import { UsersController } from "./users.controller";
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 
+import { Test } from '@nestjs/testing';
+import { AuthService } from './auth.service';
+import { UsersService } from './users.service';
+import { User } from './user.entity';
 
-
-//The describe block create an scope. It adds further description inside the tests written inside it
 describe('AuthService', () => {
-    let service: AuthService;
-    let fakeUsersService: Partial<UsersService>;
+  let service: AuthService;
+  let fakeUsersService: Partial<UsersService>;
+
+  beforeEach(async () => {
+    // Create a fake copy of the users service
     const users: User[] = [];
+    fakeUsersService = {
+      find: (email: string) => {
+        const filteredUsers = users.filter((user) => user.email === email);
+        return Promise.resolve(filteredUsers);
+      },
+      create: (email: string, password: string) => {
+        const user = {
+          id: Math.floor(Math.random() * 999999),
+          email,
+          password,
+        } as User;
+        users.push(user);
+        return Promise.resolve(user);
+      },
+    };
 
-    beforeEach(async () => {
-        fakeUsersService = {
-            find: (email: string) => {
-                const filteredUsers = users.filter((user) => user.email);
-                return Promise.resolve(filteredUsers);
-            },
+    const module = await Test.createTestingModule({
+      providers: [
+        AuthService,
+        {
+          provide: UsersService,
+          useValue: fakeUsersService,
+        },
+      ],
+    }).compile();
 
-            create: (email: string, password: string) => {
-                const user = {
-                    id: Math.floor(Math.random() * 999999),
-                    email,
-                    password,
-                } as User;
-                users.push(user);
-                return Promise.resolve(user);
-            }
-        };
-        const module = await Test.createTestingModule({
-            providers: [ //we tried to create DI container.
-                AuthService,
-                {
-                    provide: UsersService,
-                    useValue: fakeUsersService
-                },
-            ],
-        }).compile();
+    service = module.get(AuthService);
+  });
 
-        service = module.get(AuthService);
-    });
+  it('can create an instance of auth service', async () => {
+    expect(service).toBeDefined();
+  });
 
+  it('creates a new user with a salted and hashed password', async () => {
+    const user = await service.signup('asdf@asdf.com', 'asdf');
 
-    //Referencing 'service' variable safely inside all of our different tests
-    it('can create an instance of auth service', async () => {
-        expect(service).toBeDefined();
-    })
+    expect(user.password).not.toEqual('asdf');
+    const [salt, hash] = user.password.split('.');
+    expect(salt).toBeDefined();
+    expect(hash).toBeDefined();
+  });
 
-    //New test cases
-    it('should be able to create a new user', async () => {
-        const user = await service.signup('some@some.com', 'asdf');
+  it('throws an error if user signs up with email that is in use', async () => {
+    await service.signup('asdf@asdf.com', 'asdf');
+    await expect(service.signup('asdf@asdf.com', 'asdf')).rejects.toThrow(
+      BadRequestException,
+    );
+  });
 
-        expect(user.password).not.toEqual('asdf');
-        const [salt, hash] = user.password.split('.');
-        expect(salt).toBeDefined();
-        expect(hash).toBeDefined();
-    })
+  it('throws if signin is called with an unused email', async () => {
+    await expect(
+      service.signin('asdflkj@asdlfkj.com', 'passdflkj'),
+    ).rejects.toThrow(NotFoundException);
+  });
 
-    //Check if the email is in use while signing up
-    it('throws an error if user signs up with email that is in use', async () => {
-        await service.signup('asdf@asdf.com', 'asdf');
-        await expect(service.signup('asdf@asdf.com', 'asdf')).rejects.toThrow(
-            BadRequestException,
-        );
-    });
+  it('throws if an invalid password is provided', async () => {
+    await service.signup('laskdjf@alskdfj.com', 'password');
+    await expect(
+      service.signin('laskdjf@alskdfj.com', 'laksdlfkj'),
+    ).rejects.toThrow(BadRequestException);
+  });
 
-    //SignIn test case
-    it('throws if signin is called with an unused email', async () => {
-        await expect(
-            service.signin('asdflkj@asdlfkj.com', 'passdflkj'),
-        ).rejects.toThrow(NotFoundException);
-    });
+  it('returns a user if correct password is provided', async () => {
+    await service.signup('asdf@asdf.com', 'mypassword');
 
-
-    //Invalid password is provided
-    it('throws if an invalid password is provided', async () => {
-        await service.signup('laskdjf@alskdfj.com', 'password');
-        await expect(
-            service.signin('laskdjf@alskdfj.com', 'laksdlfkj'),
-        ).rejects.toThrow(BadRequestException);
-    });
-
-    //returns a user if password matches
-    it('returns a user if password matches', async () => {
-        fakeUsersService.find = () => Promise.resolve
-            ([{ email: 'test2@some.com', password: 'Admin@123' } as User]);
-
-        const user = await service.signin('test2@some.com', 'Admin@123');
-        expect(user).toBeDefined();
-    })
-
-
+    const user = await service.signin('asdf@asdf.com', 'mypassword');
+    expect(user).toBeDefined();
+  });
 });
