@@ -15,7 +15,7 @@ import { AuthGuard } from 'src/guards/auth.guard';
 @Serialize(UserDto)
 @Controller('auth')
 export class UsersController {
-    constructor(private userService: UsersService, private authService: AuthService) { }
+    constructor(private usersService: UsersService, private authService: AuthService) { }
 
     // @Get('/whoami')
     // whoAmI(@Session() session: any) {
