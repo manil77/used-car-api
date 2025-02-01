@@ -16,15 +16,35 @@ describe('Authentication System ', () => {
   });
 
   it('handles a signup request', () => {
-    const email = 'emailraandom@gmail.com';
+    const email = 'asdlkq4321@akl.com';
+
     return request(app.getHttpServer())
-      .get('/auth/signup')
-      .send({email, password: 'testPass'})
+      .post('/auth/signup')
+      .send({ email, password: 'alskdfjl' })
       .expect(201)
-      .then((res)=> {
-        const {id, email} =  res.body;
+      .then((res) => {
+        const { id, email } = res.body;
         expect(id).toBeDefined();
         expect(email).toEqual(email);
       });
+  });
+
+  it('signup the new user and get the currently logged in user', async () => {
+    const email = 'asdf@asdf.com';
+    const res = await request(app.getHttpServer())
+      .post('/auth/signup')
+      .send({ email, password: 'test@123' })
+      .expect(201);
+
+    //Making up a following request
+
+    const cookie = res.get('Set-Cookie');
+
+    const { body } = await request(app.getHttpServer())
+      .get('/auth/whoami')
+      .set('Cookie', cookie) //Attatching the value we got from the 1st request
+      .expect(200);
+
+    expect(body.email).toEqual(email);
   });
 });
