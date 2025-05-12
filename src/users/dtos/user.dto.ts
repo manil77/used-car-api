@@ -1,13 +1,12 @@
-import { IsEmail, IsNumber } from "class-validator";
-import { Expose, Exclude } from "class-transformer";
+import { IsEmail, IsNumber } from 'class-validator';
+import { Expose, Exclude } from 'class-transformer';
 
 export class UserDto {
+  @Expose()
+  @IsNumber()
+  id: number;
 
-    @Expose()
-    @IsNumber()
-    id: number;
-
-    @Expose()
-    @IsEmail()
-    email: string;
+  @Expose()
+  @IsEmail()
+  email: string;
 }
