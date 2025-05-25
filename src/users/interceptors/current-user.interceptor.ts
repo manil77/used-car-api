@@ -5,7 +5,6 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { UsersService } from '../users.service';
-import { Observable } from 'rxjs';
 
 @Injectable() // We have to mark the class as Injectable to make use of dependency injection.
 export class CurrentUserInterceptor implements NestInterceptor {

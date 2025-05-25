@@ -29,7 +29,7 @@ export class SerializeInterceptors implements NestInterceptor {
       map((data: any) => {
         return plainToClass(this.dto, data, {
           /*excludeExtraneousValues is only going to share
-                    or expose the different properties that are 
+                    or expose the different properties that are
                     specifically marked with Expose() decorator*/
           excludeExtraneousValues: true,
         });
