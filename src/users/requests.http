@@ -18,7 +18,7 @@ content-type:application/json
 
 
 ### Get a user
-GET http://localhost:3000/auth/4
+GET http://localhost:3000/auth/1
 
 
 ### Get all user
