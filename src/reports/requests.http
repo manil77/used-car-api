@@ -2,23 +2,23 @@ POST http://localhost:3000/reports
 content-type: application/json
 
 {
-  "make": "toyota",
-  "model": "corolla",
-  "year": 1980,
-  "mileage": 100000,
-  "lng": 0,
-  "lat": 0,
-  "price": 500000
+  "make": "audi",
+  "model": "r8",
+  "year": 2023,
+  "mileage": 1000,
+  "lng": 55,
+  "lat": 35,
+  "price": 920000
 }
 
 ### Approve an existing report
-PATCH http://localhost:3000/reports/1
+PATCH http://localhost:3000/reports/4
 content-type: application/json
 
 {
-  "approved": false
+  "approved": true
 }
 
 ### Get an estimate for a existing vechicle
 
-GET http://localhost:3000/reports?make=toyota&model=corolla&year=1980&mileage=20000&lng=0&lat=0
+GET http://localhost:3000/reports?make=audi&model=r8&year=2023&mileage=1000&lng=55&lat=32
